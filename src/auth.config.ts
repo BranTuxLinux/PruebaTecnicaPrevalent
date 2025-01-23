@@ -1,34 +1,43 @@
+//@ts-ignore
 import type { NextAuthConfig } from "next-auth";
+import Auth0 from "next-auth/providers/auth0";
 import GoogleProvider from "next-auth/providers/google";
 
-// Notice this is only an object, not a full Auth.js instance
 export default {
   providers: [
+    Auth0({
+      clientId: process.env.AUTH0_CLIENT_ID!,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET!,
+      issuer: process.env.AUTH0_ISSUER!,
+      authorization: { params: { prompt: "login" } },
+    }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          role: "USER",
-        };
-      },
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    jwt({ token, user }) {
-      if (user) token.role = user.role;
+    async signIn({ account, profile }) {
+      if (account?.provider === "auth0") {
+        return true;
+      }
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+      }
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
+      session.user.id = token.id;
       session.user.role = token.role;
       return session;
-    },
-    async signIn({ user, account, profile }) {
-      return true;
     },
   },
 } satisfies NextAuthConfig;

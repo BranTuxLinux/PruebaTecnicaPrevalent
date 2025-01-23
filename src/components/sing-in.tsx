@@ -4,5 +4,5 @@
 import { signIn } from "next-auth/react"
  
 export default function SignIn() {
-  return <button onClick={() => signIn("google")}>Signin</button>
+  return <button onClick={() => signIn("auth0")}>Signin</button>
 }

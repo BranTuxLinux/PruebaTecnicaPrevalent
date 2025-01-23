@@ -46,8 +46,10 @@ model User {
   emailVerified DateTime? @map("email_verified")
   role          String      @default("USER")
   image         String?
+  phone         String?
   accounts      Account[]
   sessions      Session[]
+  movements     Movement[]
 
   @@map("users")
 }
@@ -59,4 +61,22 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+   
+model Movement {
+  id        Int      @id @default(autoincrement())
+  concept   String
+  amount    Float
+  date      DateTime
+  type      MovementType 
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum MovementType {
+  INCOME
+  EXPENSE
 }
