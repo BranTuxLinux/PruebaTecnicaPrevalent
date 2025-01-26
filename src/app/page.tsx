@@ -12,6 +12,7 @@ export default async function Home() {
         <p>Welcome {session?.user?.name}</p>
         <SignOut />
         <GetUsers />
+        
       </main>
     );
   }

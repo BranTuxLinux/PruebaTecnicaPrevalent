@@ -7,7 +7,7 @@ export const checkRole = (
   if (user?.role !== requiredRole) {
     throw new Error("Unauthorized");
   }
-  if (user){
+  if (!user){
     throw new Error("No Authenticated");
   }
   

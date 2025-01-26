@@ -19,6 +19,8 @@
     "@prisma/client": "^6.2.1",
     "@types/jsonwebtoken": "^9.0.7",
     "apollo-server-micro": "^3.13.0",
+    "axios": "^1.7.9",
+    "cuid": "^3.0.0",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2",

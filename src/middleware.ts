@@ -7,7 +7,6 @@ const publicRoutes = ["/", "/login", "/register"];
 const startsRoutes = ['/api/auth/callback/google', "/api/"]
 export default middleware((req) => {
   const { nextUrl, auth } = req;
-  console.log(auth)
   
   return NextResponse.next();
 });
