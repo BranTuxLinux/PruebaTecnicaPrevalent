@@ -31,6 +31,7 @@ export const typeDefs = gql`
     id: ID
     name: String
     email: String
+    phone: String
     role: Role
     image: String
     movements: [Movement!]!
@@ -59,7 +60,7 @@ export const typeDefs = gql`
   type Query {
     getUsers: [User]! # Solo para administradores
     getUserById(id: ID!): User # Solo para administradores
-    getMovements: [Movement!]! # Todos los roles
+    getMovements: [Movement]! # Todos los roles
     getMovementById(id: ID!): Movement # Todos los roles
   }
 
@@ -114,10 +115,16 @@ const resolvers: Resolvers = {
       return prisma.user.findUnique({ where: { id } });
     },
     async getMovements(_, __, { prisma, user }) {
-      return prisma.movement.findMany({ where: { userId: user.id } });
+      const data = await prisma.movement.findMany({
+        where: { userId: user.id },
+        include: { user: true },
+      });
+      console.log({ data });
+      return data;
     },
     async getMovementById(_, { id }, { prisma, user }) {
-      const movement = await prisma.movement.findUnique({ where: { id } });
+      const movement = await prisma.movement.findUnique({ where: { id },
+      include:{user:true} });
       return movement;
     },
     getReport: async (_, { startDate, endDate, userId }, { prisma }) => {
@@ -134,8 +141,7 @@ const resolvers: Resolvers = {
             lte: end, // Fecha fin
           },
         },
-        include:{ user:true}
-        
+        include: { user: true },
       })) as [{ amount: number; type: string }];
 
       const incomeTotal = movements
@@ -221,7 +227,7 @@ const resolvers: Resolvers = {
       };
     },
     async updateUser(_, { id, name, role, phone, image }, { prisma, user }) {
-      checkRole(user, "ADMIN")
+      checkRole(user, "ADMIN");
       return prisma.user.update({
         where: { id },
         data: { name, role, phone, image },
@@ -231,8 +237,8 @@ const resolvers: Resolvers = {
       const userDeleted = await DeleteUsers(id);
       console.log({ userDeleted });
       if (!userDeleted) return false;
-      const data =  await prisma.user.delete({ where: { id } });
-      console.debug(data)
+      const data = await prisma.user.delete({ where: { id } });
+      console.debug(data);
       return true;
     },
   },
