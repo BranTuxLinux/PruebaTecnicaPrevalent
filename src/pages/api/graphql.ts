@@ -116,15 +116,15 @@ const resolvers: Resolvers = {
     },
     async getMovements(_, __, { prisma, user }) {
       const data = await prisma.movement.findMany({
-        where: { userId: user.id },
         include: { user: true },
       });
-      console.log({ data });
       return data;
     },
     async getMovementById(_, { id }, { prisma, user }) {
-      const movement = await prisma.movement.findUnique({ where: { id },
-      include:{user:true} });
+      const movement = await prisma.movement.findUnique({
+        where: { id: id },
+        include: { user: true },
+      });
       return movement;
     },
     getReport: async (_, { startDate, endDate, userId }, { prisma }) => {
@@ -133,6 +133,7 @@ const resolvers: Resolvers = {
       const end = new Date(endDate);
 
       // Filtrar movimientos
+      console.table({start:start, end:end})
       const movements = (await prisma.movement.findMany({
         where: {
           userId: userId || undefined, // Filtrar por usuario si se pasa
@@ -143,6 +144,7 @@ const resolvers: Resolvers = {
         },
         include: { user: true },
       })) as [{ amount: number; type: string }];
+      console.log(movements)
 
       const incomeTotal = movements
         .filter((m) => m.type === "INCOME")
@@ -165,8 +167,9 @@ const resolvers: Resolvers = {
   },
   Mutation: {
     async createMovement(_, { concept, amount, date, type }, { prisma, user }) {
+      console.log(date);
       return prisma.movement.create({
-        data: { concept, amount, date: new Date(date), type, userId: user.id },
+        data: { concept, amount, date: date, type, userId: user.id },
         include: { user: true },
       });
     },
@@ -175,9 +178,13 @@ const resolvers: Resolvers = {
       { id, concept, amount, date, type },
       { prisma, user }
     ) {
-      const movement = await prisma.movement.findUnique({ where: { id } });
-      return prisma.movement.update({
-        where: { id },
+      checkRole(user, "ADMIN");
+      const movement = await prisma.movement.findUnique({
+        where: { id: Number(id) },
+      });
+      console.log({ id, concept, amount, date, type });
+      const data = await  prisma.movement.update({
+        where: { id: Number(id) },
         data: {
           concept,
           amount,
@@ -185,11 +192,20 @@ const resolvers: Resolvers = {
           type,
         },
       });
+      console.log(data);
+      return data;
     },
     async deleteMovement(_, { id }, { prisma, user }) {
-      const movement = await prisma.movement.findUnique({ where: { id } });
-      await prisma.movement.delete({ where: { id } });
-      return true;
+      console.log({ id });
+      const movement = await prisma.movement.findUnique({
+        where: { id: Number(id) },
+      });
+      if (movement) {
+        await prisma.movement.delete({ where: { id: Number(id) } });
+        return true;
+      }
+
+      return false;
     },
     async createUser(
       _,
@@ -231,6 +247,7 @@ const resolvers: Resolvers = {
       return prisma.user.update({
         where: { id },
         data: { name, role, phone, image },
+        include:{ movements:true}
       });
     },
     async deleteUser(_, { id }, { prisma, user }) {

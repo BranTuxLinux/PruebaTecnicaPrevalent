@@ -1,4 +1,4 @@
-import { FinancesComponents } from "@/components/finances-components";
+import { FinancesComponents } from "@/components/ComponentFinances";
 
 export default function Finances() {
     return <FinancesComponents />

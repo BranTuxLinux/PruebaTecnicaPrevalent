@@ -1,13 +1,14 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/cn"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/cn";
+import { useSession } from "next-auth/react";
 
 export function Navigation() {
-  const pathname = usePathname()
-
-  const isAdmin = true // This should be replaced with actual authentication logic
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <nav className="bg-secondary text-secondary-foreground w-full md:w-64 md:min-h-screen">
@@ -35,10 +36,18 @@ export function Navigation() {
         </div>
       </div>
     </nav>
-  )
+  );
 }
 
-function NavLink({ href, current, children }: { href: string; current: boolean; children: React.ReactNode }) {
+function NavLink({
+  href,
+  current,
+  children,
+}: {
+  href: string;
+  current: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       href={href}
@@ -46,11 +55,10 @@ function NavLink({ href, current, children }: { href: string; current: boolean; 
         "block px-4 py-2 rounded-md text-sm font-medium",
         current
           ? "bg-primary text-primary-foreground"
-          : "text-secondary-foreground hover:bg-primary/10 hover:text-primary-foreground",
+          : "text-secondary-foreground hover:bg-primary/10 hover:text-primary-foreground"
       )}
     >
       {children}
     </Link>
-  )
+  );
 }
-

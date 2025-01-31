@@ -12,15 +12,28 @@ export const GET_USERS = gql`
     }
   }
 `;
-export const CREATE_USER = gql`
-  mutation CreateUser($name: String!, $email: String!, $password: String!) {
-    createUser(name: $name, email: $email, password: $password) {
+export const UPDATE_USER = gql`
+  mutation UpdateUser(
+    $id: ID!
+    $name: String
+    $role: Role
+    $phone: String
+  ) {
+    updateUser(id: $id, name: $name, role: $role, phone: $phone) {
       email
       id
+      image
+      movements {
+        amount
+        concept
+        date
+        type
+        createdAt
+        id
+      }
       name
       phone
       role
-      image
     }
   }
 `;

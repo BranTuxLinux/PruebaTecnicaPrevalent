@@ -7,8 +7,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ReactNode } from "react";
-import SignOut from "./sign-out";
-import { Button } from "./ui/button";
+import SignOut from "../sign-out";
+import { Button } from "../ui/button";
 
 export const AvatarMenu = ({
   children,

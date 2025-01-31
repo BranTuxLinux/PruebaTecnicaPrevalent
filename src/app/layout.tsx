@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ApolloWrapper } from "@/lib/gpl-wrapper";
-import { Navigation } from "@/components/sidebar";
+import { Navigation } from "@/components/template/sidebar";
 import { Inter } from "next/font/google";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AvatarMenu } from "@/components/avatar-menu";
-import SignIn from "@/components/sing-in"
+import { AvatarMenu } from "@/components/tools/avatar-menu";
+import SignIn from "@/components/sing-in";
+import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,11 +56,11 @@ export default async function RootLayout({
           )}
         </header>
         <div className="h-screen flex flex-col md:flex-row bg-background text-foreground items-center ">
+          <SessionProvider>
           <Navigation />
-          <ApolloWrapper>
-
-            {children}
-            </ApolloWrapper>
+            <ApolloWrapper>{children}</ApolloWrapper>
+          </SessionProvider>
+          <Toaster />
         </div>
         <footer className="bg-secondary py-4 text-center text-secondary-foreground">
           <p>Brandon Quintero 2025</p>
