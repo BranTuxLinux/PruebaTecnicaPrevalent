@@ -17,7 +17,7 @@ import { GET_REPORT } from "@/gql/query/Report";
 import { useState } from "react";
 import { HandleDatesReports } from "./HandleDatesReports";
 import Loading from "./tools/loading";
-
+import { unparse } from "papaparse";
 export default function ComponentReports() {
   const [date, setDate] = useState({
     startDate: subDays(new Date(), 10).toISOString(),
@@ -53,18 +53,13 @@ export default function ComponentReports() {
     return acc;
   }, {});
 
-  const chartData = Object.values(formattedData);
+  const chartData = Object.values(formattedData).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   const handleDownloadCSV = () => {
-    const csvContent = [
-      ["Date", "Income", "Expense", "Balance"],
-      ...chartData.map(({ date, income, expense, balance }) =>
-        [date, income, expense, balance].join(",")
-      ),
-    ]
-      .map((e) => e.join(","))
-      .join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const csv = unparse(chartData);
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -73,12 +68,18 @@ export default function ComponentReports() {
     a.click();
     document.body.removeChild(a);
   };
+  const totalActual =
+  chartData.length > 0 ? (chartData[chartData.length - 1] as { balance: number }).balance : 0;
 
   return (
     <div className="w-4/5 h-4/5">
       <div className="p-10 flex  justify-between items-center">
         <h1 className="text-3xl font-bold">Financial Reports</h1>
-        <HandleDatesReports date={date} setDate={setDate} handleRecharge={handleRecharge}/>
+        <HandleDatesReports
+          date={date}
+          setDate={setDate}
+          handleRecharge={handleRecharge}
+        />
       </div>
       <div className="h-96">
         <ResponsiveContainer width="100%" height="100%">
@@ -112,7 +113,14 @@ export default function ComponentReports() {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <Button onClick={handleDownloadCSV}>Download CSV Report</Button>
+
+      <div className="flex justify-around items-center">
+        <Button onClick={handleDownloadCSV}>Download CSV Report</Button>
+        <span className="flex items-center">
+          total actual:
+          <p className={`text-2xl ${totalActual < 0 ? "text-red-900" : "text-green-800"}`}>${totalActual}</p>
+        </span>
+      </div>
     </div>
   );
 }

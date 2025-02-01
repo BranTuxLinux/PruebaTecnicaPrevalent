@@ -38,16 +38,16 @@ export default {
             id,
           },
         });
-        if (!existingUser){
+        if (!existingUser) {
           await prisma.user.create({
             data: {
               name: profile?.name,
               email: profile?.email,
               image: profile?.picture,
               emailVerified: null,
-              id: id
-            }
-          })
+              id: id,
+            },
+          });
         }
         return true;
       }

@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction } from "react";
 interface AlertDialogFinancesProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  confirmed: () => void; // No recibe `id` directamente
+  confirmed: (id: string) => void; 
   close: () => void;
 }
 export const AlertDialogFinances: React.FC<AlertDialogFinancesProps> = ({

@@ -1,13 +1,10 @@
 import { auth } from "@/auth";
-import { GetUsers } from "@/components/getUsers";
-import SignOut from "@/components/sign-out";
-import SignIn from "@/components/sing-in";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function Home() {
   const session = await auth();
-  const isAdmin = session?.user.role === "ADMIN";
+  const isAdmin = session?.user?.role === "ADMIN";
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
       <h1 className="text-4xl font-bold mb-8">
