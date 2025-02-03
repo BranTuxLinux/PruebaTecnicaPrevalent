@@ -30,7 +30,6 @@ Se implementaron pruebas unitarias utilizando **Vitest**. La elección de Vitest
 - Para ejecutar las pruebas se utilizan los siguientes comandos:
   - `bun run test` – para correr las pruebas.
 
-
   - `bun run test:ui` – para la versión con visualización en el navegador.
 
 ### Modelos Gráficos de las Pruebas
@@ -56,6 +55,10 @@ La aplicación se construye correctamente utilizando el comando `bun run build`.
 
 ## Comandos para Ejecución en Local
 
+### Nota: El proyecto no funcionara si no tiene las variables de entorno ".env" las encontrara en el correo adjunto.
+### Nota2: utilice una cuenta administrador por defecto: 
+- *email*: sustenalmu@gufum.com
+- *password*: 12345678aA.
 A continuación, se detalla la secuencia de comandos para instalar y ejecutar el proyecto de forma local:
 
 ```bash
