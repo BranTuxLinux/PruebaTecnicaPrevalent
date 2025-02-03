@@ -1,5 +1,4 @@
 "use client";
-
 import { useQuery } from "@apollo/client";
 import { format, subDays } from "date-fns";
 import {
@@ -15,9 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { GET_REPORT } from "@/gql/query/Report";
 import { useState } from "react";
-import { HandleDatesReports } from "./HandleDatesReports";
+import { HandleDatesReports } from "./tools/HandleDatesReports";
 import Loading from "./tools/loading";
 import { unparse } from "papaparse";
+import { FormattedEntry, Movement } from "./components";
+import { handleDownloadCSV } from "@/utils/DownloadCSV";
+
+type ChartDataType = FormattedEntry[];
+
 export default function ComponentReports() {
   const [date, setDate] = useState({
     startDate: subDays(new Date(), 10).toISOString(),
@@ -39,37 +43,40 @@ export default function ComponentReports() {
   if (error)
     return <section className="w-full h-full">{error.message}</section>;
   const handleRecharge = () => refetch();
-  const formattedData = data?.getReport?.movements?.reduce((acc, movement) => {
-    const date = format(new Date(Number(movement.date)), "yyyy-MM-dd");
-    if (!acc[date]) {
-      acc[date] = { date, income: 0, expense: 0, balance: 0 };
-    }
-    if (movement.type === "INCOME") {
-      acc[date].income += movement.amount;
-    } else {
-      acc[date].expense += movement.amount;
-    }
-    acc[date].balance = acc[date].income - acc[date].expense;
-    return acc;
-  }, {});
-
-  const chartData = Object.values(formattedData).sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  const formattedData = data?.getReport?.movements?.reduce(
+    (acc: Record<string, FormattedEntry>, movement: Movement) => {
+      const date = format(new Date(Number(movement.date)), "yyyy-MM-dd");
+      if (!acc[date]) {
+        acc[date] = { date, income: 0, expense: 0, balance: 0 };
+      }
+      if (movement.type === "INCOME") {
+        acc[date].income += movement.amount;
+      } else {
+        acc[date].expense += movement.amount;
+      }
+      acc[date].balance = acc[date].income - acc[date].expense;
+      return acc;
+    },
+    {}
   );
 
-  const handleDownloadCSV = () => {
-    const csv = unparse(chartData);
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "financial_report.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-  const totalActual =
-  chartData.length > 0 ? (chartData[chartData.length - 1] as { balance: number }).balance : 0;
+  const chartData: any = Object.values(formattedData || {})
+  .sort((a: any, b: any): number => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    
+    if (isNaN(dateA) || isNaN(dateB)) {
+      throw new Error("Invalid date format in formattedData");
+    }
+    
+    return dateA - dateB;
+  });
+
+  
+  const Total =
+    chartData.length > 0
+      ? (chartData[chartData.length - 1] as { balance: number }).balance
+      : 0;
 
   return (
     <div className="w-4/5 h-4/5">
@@ -90,7 +97,13 @@ export default function ComponentReports() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis />
-            <Tooltip />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                border: "none",
+                opacity: 0.7,
+              }}
+            />
             <Legend />
             <Line
               type="monotone"
@@ -115,10 +128,16 @@ export default function ComponentReports() {
       </div>
 
       <div className="flex justify-around items-center">
-        <Button onClick={handleDownloadCSV}>Download CSV Report</Button>
+        <Button onClick={() => handleDownloadCSV(chartData)}>Download CSV Report</Button>
         <span className="flex items-center">
-          total actual:
-          <p className={`text-2xl ${totalActual < 0 ? "text-red-900" : "text-green-800"}`}>${totalActual}</p>
+          Balance:
+          <p
+            className={`text-2xl ${
+              Total < 0 ? "text-red-900" : "text-green-800"
+            }`}
+          >
+            ${Total}
+          </p>
         </span>
       </div>
     </div>

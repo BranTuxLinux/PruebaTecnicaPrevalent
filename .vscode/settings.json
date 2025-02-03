@@ -1,6 +1,10 @@
 {
     "cSpell.words": [
         "authjs",
-        "NEXTAUTH"
-    ]
+        "NEXTAUTH",
+        "papaparse"
+    ],
+    "search.exclude": {
+        "**/node_modules": false
+    }
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,15 +8,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IUserSession } from "../../types/session-user";
 import { useQuery } from "@apollo/client";
 import { GET_USERS } from "@/gql/query/users";
 import { GetUsersResponse } from "@/gql/graphql";
 import { Loader2 } from "lucide-react";
 
-import { ModalUser } from "./modalUser";
+import { ModalUser } from "./ModalUser";
 
-export const User = ({ session }: { session: IUserSession }) => {
+export const User = () => {
   const { data, error, loading, refetch } =
     useQuery<GetUsersResponse>(GET_USERS);
   console.table({ data, error, loading });

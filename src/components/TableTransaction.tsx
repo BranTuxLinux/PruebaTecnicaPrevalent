@@ -10,29 +10,13 @@ import {
 import { Button } from "./ui/button";
 import { ApolloQueryResult, useMutation } from "@apollo/client";
 import { DELETE_MOVEMENTS, UPDATE_MOVEMENTS } from "@/gql/query/Movements";
-import { ModalFinances } from "./modalFinances";
+import { ModalFinances } from "./ModalFinances";
 import { useState } from "react";
 import { AlertDialogFinances } from "./tools/Alert";
 import { useToast } from "@/hooks/use-toast";
 import { formatterCoin } from "@/utils/formaterCoin";
 import { useSession } from "next-auth/react";
-
-interface Transaction {
-  id: string;
-  concept: string;
-  amount: number;
-  type: string;
-  date: string;
-  user: {
-    name: string;
-  };
-}
-
-interface TransactionsTableProps {
-  transactions: Transaction[];
-  loading: boolean;
-  refetch: () => Promise<ApolloQueryResult<any>>;
-}
+import { TransactionsTableProps } from "./components";
 
 export function TransactionsTable({
   transactions,

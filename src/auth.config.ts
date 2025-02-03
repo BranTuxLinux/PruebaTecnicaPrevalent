@@ -1,38 +1,38 @@
-//@ts-ignore
 import type { NextAuthConfig } from "next-auth";
 import Auth0 from "next-auth/providers/auth0";
-import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./lib/prisma";
-
+import {
+  AUTH0_CLIENT_ID,
+  AUTH0_CLIENT_SECRET,
+  AUTH0_ISSUER,
+  NEXTAUTH_SECRET,
+} from "./lib/config";
 export default {
+  trustHost: true,
   providers: [
     Auth0({
-      clientId: process.env.AUTH0_CLIENT_ID!,
-      clientSecret: process.env.AUTH0_CLIENT_SECRET!,
-      issuer: process.env.AUTH0_ISSUER!,
+      clientId: AUTH0_CLIENT_ID!,
+      clientSecret: AUTH0_CLIENT_SECRET!,
+      issuer: AUTH0_ISSUER!,
       authorization: { params: { prompt: "login" } },
       allowDangerousEmailAccountLinking: true,
-    }),
-    GoogleProvider({
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+      redirectProxyUrl: "",
+      checks: ["state"],
     }),
   ],
 
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
   callbacks: {
+    authorized: async ({ auth }) => !!auth,
     async signIn({ account, profile }) {
       if (account?.provider === "auth0") {
-        console.table({
-          provider: account.providerAccountId,
-          profile: profile?.sub,
-          id: profile?.id,
-          idAccount: account.userId,
-        });
         const id = account.providerAccountId;
+        await prisma.$connect();
+
+        // ? Creación antes del adapter debido a que presenta problemas 
         const existingUser = await prisma.user.findUnique({
           where: {
             id,

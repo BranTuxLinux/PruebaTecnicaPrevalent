@@ -24,11 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-interface IFinances {
-  title: string;
-  user?: {} | any;
-  refetch: () => Promise<ApolloQueryResult<any>>;
-}
+import { IFinances } from "./components";
+
 export const ModalUser: React.FC<IFinances> = ({
   title,
   user: us,

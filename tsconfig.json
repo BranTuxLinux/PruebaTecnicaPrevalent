@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2017",
     "lib": [
@@ -9,8 +10,6 @@
     "jsx": "preserve",
     "module": "ESNext",
     "esModuleInterop": true,
-    "types": ["jest"]
-,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -29,14 +28,15 @@
         "./src/*"
       ]
     },
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["node", "react"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "vitest-setup.js"  ],
+    ".next/types/**/*.ts",
+  ],
   "exclude": [
     "node_modules"
   ]

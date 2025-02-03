@@ -7,10 +7,11 @@ import {
   NextSSRInMemoryCache,
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support/ssr";
-
+const URL_URI = process.env.NODE_ENV === "production" ? "https://fms-brantuxlinuxs-projects.vercel.app" : "http://localhost:3000"
 function makeClient() {
   const httpLink = new HttpLink({
-    uri: `http://localhost:3000/api/graphql`,
+    uri: `${URL_URI}/api/graphql`,
+    
   });
 
   return new NextSSRApolloClient({
@@ -18,8 +19,10 @@ function makeClient() {
     link:
       typeof window === "undefined"
         ? ApolloLink.from([
+
             new SSRMultipartLink({
               stripDefer: true,
+
             }),
             httpLink,
           ])

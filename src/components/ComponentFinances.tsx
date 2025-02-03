@@ -17,15 +17,16 @@ import { useSession } from "next-auth/react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { TransactionsTable } from "@/components/TransactionsTable";
-import { Calendar } from "@/components/ui/calendar"; // Importa el Calendar
+import { TransactionsTable } from "@/components/TableTransaction";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"; // Importa Popover
-import { format } from "date-fns"; // Para formatear la fecha
+} from "@/components/ui/popover";
+import { format } from "date-fns";
 import { formatterCoin } from "@/utils/formaterCoin";
+import { calculateTotals } from "@/utils/calculateTotals";
 
 export function FinancesComponents() {
   const { data, loading, error, refetch } = useQuery(GET_MOVEMENTS);
@@ -44,7 +45,6 @@ export function FinancesComponents() {
   console.log({ newTransaction });
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       await createMovements({
         variables: {
@@ -67,7 +67,7 @@ export function FinancesComponents() {
         concept: "",
         amount: "",
         date: new Date(),
-      })); // Restablece la fecha
+      }));
     } catch (err) {
       toast({
         title: "Error",
@@ -76,18 +76,6 @@ export function FinancesComponents() {
       });
       console.error(err);
     }
-  };
-
-  const calculateTotals = (transactions: any[]) => {
-    const totalIncome = transactions
-      .filter((transaction) => transaction.type === "INCOME")
-      .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-    const totalExpense = transactions
-      .filter((transaction) => transaction.type === "EXPENSE")
-      .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-    return totalIncome - totalExpense;
   };
 
   const total = data?.getMovements ? calculateTotals(data.getMovements) : 0;

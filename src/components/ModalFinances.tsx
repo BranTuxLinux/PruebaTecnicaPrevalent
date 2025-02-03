@@ -14,14 +14,11 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { ApolloQueryResult, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { UPDATE_MOVEMENTS } from "@/gql/query/Movements";
-interface IFinances {
-  title: string;
-  transaction?: {} | any;
-  refetch: () => Promise<ApolloQueryResult<any>>;
-}
-export const ModalFinances: React.FC<IFinances> = ({
+import { IModalFinances } from "./components";
+
+export const ModalFinances: React.FC<IModalFinances> = ({
   title,
   transaction,
   refetch,
@@ -61,7 +58,7 @@ export const ModalFinances: React.FC<IFinances> = ({
         updateMovementId: Number(transaction.id),
         date: editTransaction.date,
         concept: editTransaction.concept,
-        amount:editTransaction.amount
+        amount: editTransaction.amount,
       },
     });
   };

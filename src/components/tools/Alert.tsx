@@ -7,14 +7,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
 interface AlertDialogFinancesProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  confirmed: (id: string) => void; 
+  confirmed: any;
   close: () => void;
 }
 export const AlertDialogFinances: React.FC<AlertDialogFinancesProps> = ({
