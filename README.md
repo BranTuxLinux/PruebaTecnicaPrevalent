@@ -36,7 +36,7 @@ Se implementaron pruebas unitarias utilizando **Vitest**. La elección de Vitest
 ### Modelos Gráficos de las Pruebas
 
 ![Gráfico de las Paginas](assets/test3.png)
-![Gráfico de las Utilidades](assets/test3.png)
+![Gráfico de las Utilidades](assets/test4.png)
 
 ---
 ## Uso de Bun

@@ -7,7 +7,7 @@ import {
   NextSSRInMemoryCache,
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support/ssr";
-const URL_URI = process.env.NODE_ENV === "production" ? "https://fms-brantuxlinuxs-projects.vercel.app" : "http://localhost:3000"
+const URL_URI = "http://localhost:3000"
 function makeClient() {
   const httpLink = new HttpLink({
     uri: `${URL_URI}/api/graphql`,

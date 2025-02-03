@@ -29,7 +29,7 @@
       ]
     },
     "strictNullChecks": true,
-    "types": ["node", "react"]
+    "types": ["node", "react","next-auth"]
   },
   "include": [
     "next-env.d.ts",
