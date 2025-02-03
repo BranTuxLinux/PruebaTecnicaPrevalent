@@ -1,2 +1,2 @@
-//@ts-nocheck
-import '@testing-library/jest-dom/vitest'
+// vitest-setup.ts
+import "@testing-library/jest-dom"
